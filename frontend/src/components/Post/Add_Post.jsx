@@ -6,16 +6,17 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db, storage } from "../firebase.config";
-import { getAuth } from "firebase/auth";
+import { db, storage } from "../../firebase.config.js"
 import { useNavigate } from "react-router-dom";
 
 const Add_Post = () => {
-  const auth = getAuth();
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [authorName, setAuthorName] = useState("");
+  const [email, setEmail] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
 
   const handleChange = (e) => {
     if (e.target.files[0]) {
@@ -25,53 +26,70 @@ const Add_Post = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const storageRef = ref(storage, `images/${image.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      await uploadTask;
 
-    if (auth.currentUser) {
-      try {
-        const storageRef = ref(storage, `images/${image.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, image);
-        await uploadTask;
+      const url = await getDownloadURL(uploadTask.snapshot.ref);
 
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-
-        const data = {
-          author: auth.currentUser.displayName,
-          email: auth.currentUser.email,
-          photoUrl: auth.currentUser.photoURL,
-          imageUrl: url,
-          userId: auth.currentUser.uid,
-          title,
-          description,
-          time: serverTimestamp(),
-        };
-        const saveData = await addDoc(collection(db, "post"), data);
-        setDescription("")
-        setTitle("")
-        navigate('/')
-
-
-
-
-
-        
-        
-      } catch (error) {
-
-
-        console.log("error", error);
-      }
-    } else {
-      alert("You need to login first!");
+      const data = {
+        author: authorName, 
+        email: email,
+        photoUrl: photoUrl,
+        imageUrl: url,
+        userId: Date.now().toString(),
+        title,
+        description,
+        time: serverTimestamp(),
+      };
+      
+      await addDoc(collection(db, "post"), data);
+      setDescription("");
+      setTitle("");
+      setAuthorName("");
+      setEmail("");
+      setPhotoUrl("");
+      navigate('/');
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
   return (
-
-    
     <div className="container add_post my-5">
       <h1>Upload a New Post!</h1>
       <form onSubmit={handleSubmit}>
-        {/* <form> */}
+        <div className="mb-3">
+          <label className="form-label">Author Name</label>
+          <input
+            type="text"
+            value={authorName}
+            className="form-control"
+            onChange={(e) => setAuthorName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            type="email"
+            value={email}
+            className="form-control"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Profile Photo URL</label>
+          <input
+            type="url"
+            value={photoUrl}
+            className="form-control"
+            onChange={(e) => setPhotoUrl(e.target.value)}
+            required
+          />
+        </div>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
             Title
@@ -105,7 +123,6 @@ const Add_Post = () => {
           </label>
           <input
             type="file"
-            // value={image}
             accept="image/*"
             onChange={handleChange}
             className="form-control"
@@ -113,7 +130,6 @@ const Add_Post = () => {
             required
           />
         </div>
-
         <button type="submit" className="btn btn-primary">
           Add Post
         </button>
