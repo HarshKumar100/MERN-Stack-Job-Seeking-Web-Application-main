@@ -16,7 +16,8 @@ import MyApplications from "./components/Application/MyApplications";
 import PostJob from "./components/Job/PostJob";
 import NotFound from "./components/NotFound/NotFound";
 import MyJobs from "./components/Job/MyJobs";
-
+import Get_Posts from "./components/Post/Get_Posts"
+import Add_Post from "./components/Post/Add_Post";
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
   useEffect(() => {
@@ -52,6 +53,7 @@ const App = () => {
           <Route path="/job/post" element={<PostJob />} />
           <Route path="/job/me" element={<MyJobs />} />
           <Route path="/posts" element={<Get_Posts />} />
+          <Route path="/addpost" element={<Add_Post/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

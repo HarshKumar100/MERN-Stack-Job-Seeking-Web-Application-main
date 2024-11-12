@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 const Navbar = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const { isAuthorized, setIsAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
 
@@ -36,6 +36,16 @@ const Navbar = () => {
           <li>
             <Link to={"/"} onClick={() => setShow(false)}>
               HOME
+            </Link>
+          </li>
+          <li>
+            <Link to={"/posts"} onClick={() => setShow(false)}>
+              POSTS
+            </Link>
+          </li>
+          <li>
+            <Link to={"/addpost"} onClick={() => setShow(false)}>
+              ADD POST
             </Link>
           </li>
           <li>
