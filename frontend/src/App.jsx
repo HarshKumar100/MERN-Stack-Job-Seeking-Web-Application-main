@@ -53,6 +53,7 @@ const App = () => {
           <Route path="/job/post" element={<PostJob />} />
           <Route path="/job/me" element={<MyJobs />} />
           <Route path="/posts" element={<Get_Posts />} />
+          
           <Route path="/addpost" element={<Add_Post/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>

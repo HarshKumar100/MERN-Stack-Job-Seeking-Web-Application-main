@@ -44,6 +44,11 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
+            <Link to={"http://localhost:3000/"} onClick={() => setShow(false)}>
+              CHATS
+            </Link>
+          </li>
+          <li>
             <Link to={"/addpost"} onClick={() => setShow(false)}>
               ADD POST
             </Link>
